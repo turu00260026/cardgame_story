@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>キミならどうする？ 勝利への選択肢</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Hiragino Kaku Gothic Pro', 'ヒラギノ角ゴ Pro W3', 'Meiryo', 'メイリオ', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff;
+            overflow: auto;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 80vh;
+            max-width: 900px;
+            margin: 1vh auto;
+            background-color: rgba(22, 33, 62, 0.9);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+        }
+
+        .title-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            text-align: center;
+            border-radius: 10px;
+        }
+
+        .title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .title-image {
+            max-width: 80%;
+            max-height: 70%;
+            object-fit: contain;
+            margin-bottom: 1rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-screen {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .image-area {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+            padding: 1rem;
+            border-bottom: 3px solid #e94560;
+        }
+
+        .scene-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .text-area {
+            height: 30vh;
+            min-height: 30vh;
+            max-height: 30vh;
+            background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
+            padding: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-top: 3px solid #e94560;
+        }
+
+        .text-content {
+            flex: 1;
+            font-size: 1.1rem;
+            line-height: 1.4;
+            overflow: hidden;
+            padding-right: 0.5rem;
+            white-space: pre-wrap;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            min-height: 0;
+        }
+
+
+        .button-area {
+            display: flex;
+            flex-direction: column;
+            margin-top: 0.5rem;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            min-width: 60px;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #e94560, #f27121);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(233, 69, 96, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-start {
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            color: white;
+            font-size: 0.9rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 25px;
+        }
+
+        .btn-start:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(240, 147, 251, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .choice-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .choice-btn {
+            padding: 0.6rem 0.8rem;
+            font-size: 0.8rem;
+            border: 2px solid #e94560;
+            border-radius: 12px;
+            background: rgba(233, 69, 96, 0.1);
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            min-height: 35px;
+            display: flex;
+            align-items: center;
+        }
+
+        .choice-btn:hover {
+            background: rgba(233, 69, 96, 0.3);
+            transform: translateX(10px);
+            box-shadow: 0 3px 10px rgba(233, 69, 96, 0.3);
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            height: 4px;
+            margin-bottom: 0.5rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(45deg, #e94560, #f27121);
+            height: 100%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .ending-screen {
+            text-align: center;
+            padding: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            margin: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .ending-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #ffd93d;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                max-width: 95%;
+                height: 85vh;
+                margin: 1vh auto;
+            }
+
+            .title {
+                font-size: 1.6rem;
+                margin-bottom: 0.8rem;
+            }
+
+            .text-area {
+                height: 30vh;
+                min-height: 30vh;
+                max-height: 30vh;
+                padding: 0.6rem;
+            }
+
+            .text-content {
+                font-size: 0.8rem;
+                line-height: 1.4;
+            }
+
+            .btn {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.7rem;
+                min-width: 50px;
+            }
+
+            .btn-start {
+                font-size: 0.8rem;
+                padding: 0.5rem 1rem;
+            }
+
+            .choice-btn {
+                padding: 0.5rem 0.6rem;
+                font-size: 0.7rem;
+                min-height: 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                height: 90vh;
+                margin: 1vh auto;
+                max-width: 98%;
+            }
+
+            .title {
+                font-size: 1.2rem;
+                margin-bottom: 0.6rem;
+            }
+
+            .text-area {
+                height: 32vh;
+                min-height: 32vh;
+                max-height: 32vh;
+                padding: 0.5rem;
+            }
+
+            .text-content {
+                font-size: 0.75rem;
+                line-height: 1.3;
+            }
+
+            .btn {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.6rem;
+                min-width: 40px;
+            }
+
+            .choice-btn {
+                padding: 0.4rem 0.5rem;
+                font-size: 0.6rem;
+                min-height: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title-screen" id="titleScreen">
+            <img src="images/1.png" alt="タイトル" class="title-image">
+            <button class="btn btn-start" onclick="startGame()">スタート</button>
+        </div>
+
+        <div class="game-screen" id="gameScreen">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="image-area">
+                <img src="images/1.png" alt="シーン画像" class="scene-image" id="sceneImage">
+            </div>
+            <div class="text-area">
+                <div class="text-content" id="textContent">
+                    テキストがここに表示されます。
+                </div>
+                <div class="button-area">
+                    <div class="choice-buttons" id="choiceButtons"></div>
+                    <div class="nav-buttons">
+                        <button class="btn btn-secondary" id="prevBtn" onclick="previousScene()">戻る</button>
+                        <button class="btn btn-primary" id="nextBtn" onclick="nextScene()">次へ</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let gameData = null;
+        let currentScene = 'start';
+        let gameHistory = [];
+        let gameFlags = {
+            analysis_done: false,
+            money_done: false,
+            muscle_done: false
+        };
+        let currentTextPages = [];
+        let currentTextPageIndex = 0;
+
+        // JSONファイルを読み込む
+        fetch('scenario_visual_novel.json')
+            .then(response => response.json())
+            .then(data => {
+                gameData = data;
+                gameFlags = { ...data.flags };
+            })
+            .catch(error => {
+                console.error('シナリオファイルの読み込みに失敗しました:', error);
+                // フォールバック用の基本データ
+                gameData = {
+            "title": "キミならどうする？ 勝利への選択肢",
+            "description": "カードゲームを通して成長する少年の物語。複数のエンディングがある分岐型ビジュアルノベル。",
+            "titleImage": "images/1.png",
+            "scenes": [
+                {
+                    "id": "start",
+                    "image": "images/2.png",
+                    "text": "タイトル：『キミならどうする？ 勝利への選択肢』",
+                    "isTitle": true,
+                    "nextScene": "chapter1"
+                },
+                {
+                    "id": "chapter1",
+                    "image": "images/4.png",
+                    "text": "【1、はじまりの章：くやし涙の放課後】\n\n「くそーっ！また負けた……！」\n\n放課後の教室に、ユウキのくやしい声がひびいた。\n\n目の前には、クラスで一番カードゲームが強いケンタが、ニヤリと笑って立っている。\n\nユウキが遊んでいるカードゲームは、小学生に大人気の『モンスター・コロシアム』だ。",
+                    "nextScene": "chapter1_2"
+                },
+                {
+                    "id": "chapter1_2",
+                    "image": "images/5.png",
+                    "text": "ケンタはいつも最新の強いカードを持っていて、戦い方も大人顔負け。ユウキは、これまで一度もケンタに勝てたことがなかった。\n\n「ユウキは弱いなあ。もっと練習しないと、オレの相手にはなれないぜ」\n\nケンタの言葉が、グサリと胸にささる。",
+                    "nextScene": "chapter1_3"
+                },
+                {
+                    "id": "chapter1_3",
+                    "image": "images/2.png",
+                    "text": "まわりの友達も「ケンタ、強すぎ！」「ユウキ、どんまい」なんて言っている。\n\n悔しくて、涙が出そうになるのをグッとこらえた。\n\n（どうして勝てないんだ……。僕だって、ケンタに勝ちたいのに！）",
+                    "nextScene": "chapter1_4"
+                },
+                {
+                    "id": "chapter1_4",
+                    "image": "images/6.png",
+                    "text": "しょんぼりと家に帰る途中、公園のベンチで休憩をしながら、ぼんやりと自分のカードを眺めていた。",
+                    "nextScene": "chapter2"
+                },
+                {
+                    "id": "chapter2",
+                    "image": "images/7.png",
+                    "text": "【2、運命の出会い：伝説のカードマスター】\n\nその時、誰かが声をかけてきた。\n\n「いいデッキだね。でも、もう少し工夫すれば、もっと強くなるよ」\n\n声をかけてきたのは、メガネをかけて少し髪がくるっとしたお兄さんだった。",
+                    "nextScene": "chapter2_2"
+                },
+                {
+                    "id": "chapter2_2",
+                    "image": "images/11.png",
+                    "text": "「え……？」\n\nユウキが驚いて顔を上げると、お兄さんはユウキの持っているカードの束（デッキ）を優しく指さした。\n\n「この『ロック・ゴーレム』と『森のエルフ』、一緒に出せたら強いと思わないかい？ゴーレムが相手の攻撃を防いでいる間に、エルフがじわじわと相手のライフを削るんだ」",
+                    "nextScene": "chapter2_3"
+                },
+                {
+                    "id": "chapter2_3",
+                    "image": "images/10.png",
+                    "text": "言われてみれば、そんな使い方は考えたこともなかった。ユウキはいつも、攻撃力が高いカードばかりを使っていたからだ。\n\n「お兄さん、すごい！もしかして、『モンスター・コロシアム』が強いの？」\n\n「まあね。昔はちょっとだけ、本気でやってたから。俺はれんとん。よろしくな」",
+                    "nextScene": "chapter2_4"
+                },
+                {
+                    "id": "chapter2_4",
+                    "image": "images/8.png",
+                    "text": "れんとんと名乗るお兄さんの目は、カードの話をするときだけ、キラリと鋭く光った。近所のおばあちゃんがいうことには、れんとんさんは、かつて全国大会にも出場したことがある、この町じゃ負け知らずの\"伝説のカードマスター\"だったらしい。\n\n（この人なら、僕を強くしてくれるかもしれない！）\n\nユウキは決意した。",
+                    "nextScene": "chapter2_5"
+                },
+                {
+                    "id": "chapter2_5",
+                    "image": "images/9.png",
+                    "text": "「れんとんさん！僕に、『モンスター・コロシアム』を教えてください！僕、ケンタに勝ちたいんです！」\n\nれんとんは少し驚いた顔をしたが、やがてニヤリと笑って言った。\n\n「いいよ。ただし、俺の修行はきびしいぞ？」\n\nこうして、ユウキと伝説のカードマスター・れんとんの、不思議な修行の日々が始まった。",
+                    "nextScene": "chapter3"
+                },
+                {
+                    "id": "chapter3",
+                    "image": "images/9.png",
+                    "text": "【3、れんとんの修行：強くなるための道】\n\n次の日、ユウキが再び駄菓子屋に行くと、れんとんは店の裏の公園で待っていた。\n\n「よし、さっそく修行を始める。強くなるための道は、いくつかある。どれから始めるか、キミが選ぶんだ」\n\nれんとんは、3つの選択肢をユウキに示した。",
+                    "choices": [
+                        {
+                            "text": "A：カードの特性や組み合わせを分析する",
+                            "nextScene": "training_analysis"
+                        },
+                        {
+                            "text": "B：お菓子を我慢してお小遣いで新しいカードを買う",
+                            "nextScene": "training_money"
+                        },
+                        {
+                            "text": "C：腕立て伏せや腹筋などの筋トレをする",
+                            "nextScene": "training_muscle"
+                        }
+                    ]
+                },
+                {
+                    "id": "training_muscle",
+                    "image": "images/13.png",
+                    "text": "【謎の修行！？】\n\n「よし、まずは筋トレだ！」\n\nユウキがそう言うと、れんとんは「お、おう……」と少し意外そうな顔をしながらも、トレーニングを始めた。",
+                    "nextScene": "training_muscle_1_2"
+                },
+                {
+                    "id": "training_muscle_1_2",
+                    "image": "images/13.png",
+                    "text": "「いくぞ！腕立て、イチ、ニ、サン！」「腹筋、イチ、ニ、サン！」\n\n汗びっしょりになって、ユウキは腕立て伏せと腹筋を繰り返した。",
+                    "nextScene": "training_muscle_2"
+                },
+                {
+                    "id": "training_muscle_2",
+                    "image": "images/13.png",
+                    "text": "息が切れ、腕がプルプルとふるえる。\n\nしばらく続けた後、ユウキはハッと我に返った。\n\n（……あれ？たしかに体は鍛えられてるけど、これでカードゲームが強くなるのかな？）\n\nユウキが不思議に思って、隣で同じように汗をかいているれんとんに聞いた。",
+                    "nextScene": "training_muscle_2_2"
+                },
+                {
+                    "id": "training_muscle_2_2",
+                    "image": "images/13.png",
+                    "text": "「れんとん師匠！このトレーニングって、本当にカードゲームのためなんですか？」\n\nすると、れんとんはバツが悪そうに頭をかきながら言った。\n\n「ごめんごめん！実はこれ、最近ちょっと太ってきちゃった、俺自身のトレーニングメニューだったんだ……。いやあ、付き合わせちゃって悪かったな！」",
+                    "nextScene": "training_muscle_3"
+                },
+                {
+                    "id": "training_muscle_3",
+                    "image": "images/14.png",
+                    "text": "\n\nユウキはずっこけた。どうやら、これはカードゲームの修行ではなかったらしい。",
+                    "nextScene": "chapter3",
+                    "flag": "muscle_done"
+                },
+                {
+                    "id": "training_analysis",
+                    "image": "images/11.png",
+                    "text": "【分析の修行】\n\n「よし！まずは頭を使う修行だ！」\n\nれんとんは、ユウキの持っているカードを全部並べさせると、一枚一枚の強みや弱みを丁寧に説明してくれた。",
+                    "nextScene": "training_analysis_1_2"
+                },
+                {
+                    "id": "training_analysis_1_2",
+                    "image": "images/11.png",
+                    "text": "「このカードは単体では弱くても、あのカードと組み合わせると、とんでもない力を発揮する。これを『コンボ』って言うんだ。ケンタくんが強いのは、このコンボをたくさん知っているからさ」",
+                    "nextScene": "training_analysis_2"
+                },
+                {
+                    "id": "training_analysis_2",
+                    "image": "images/11.png",
+                    "text": "ユウキは、れんとんの話に夢中になった。今までただの弱いカードだと思っていたものに、すごい可能性が隠されていることを知った。\n\n夜、家に帰ってからも、ノートにカードの組み合わせを書き出して、自分だけの最強コンボを考える毎日が続いた。",
+                    "nextScene": "check_both_trainings",
+                    "flag": "analysis_done"
+                },
+                {
+                    "id": "training_money",
+                    "image": "images/12.png",
+                    "text": "【お小遣いの修行】\n\n「よし！次はカードを増やす修行だ！」\n\nれんとんに言われ、ユウキは新しいカードを手に入れるため、お小遣いを貯めることにした。\n\n毎日買っていたアイスやお菓子を、ぐっと我慢する。友達がおいしそうにジュースを飲んでいるのを見ると、心がゆらぎそうになった。",
+                    "nextScene": "training_money_2"
+                },
+                {
+                    "id": "training_money_2",
+                    "image": "images/12.png",
+                    "text": "（でも、ここで我慢すれば、新しいカードが手に入るんだ……！）\n\nユウキは歯を食いしばって、毎日コツコツとお金を貯金箱に入れた。そして一週間後、ついに目標の金額が貯まった！\n\nユウキはカードショップに走り、ドキドキしながら新しいカードパックを一つ買った。",
+                    "nextScene": "check_both_trainings",
+                    "flag": "money_done"
+                },
+                {
+                    "id": "check_both_trainings",
+                    "image": "images/26.png",
+                    "text": "修行の成果が実り始めた。\n\n（両方の修行が完了しているかチェックして、章4に進むかまだ修行に戻るかを判定する場面）",
+                    "nextScene": "chapter4",
+                    "conditionalNext": true
+                },
+                {
+                    "id": "chapter4",
+                    "image": "images/26.png",
+                    "text": "【4、運命の一枚】\n\n分析の修行で頭を鍛え、お小遣いを貯めて新しい戦力を手に入れたユウキ。\n\nれんとんが見守る中、買ったばかりのカードパックを、震える手で開けた。\n\nペリペリ……。\n\n中から出てきたカードを一枚ずつ確認していく。",
+                    "nextScene": "chapter4_2"
+                },
+                {
+                    "id": "chapter4_2",
+                    "image": "images/26.png",
+                    "text": "すると、最後のカードが、今まで見たこともないような虹色の光を放っていた！\n\n「こ、これは……！？」\n\nそこに描かれていたのは、巨大な剣を構えた、白銀の竜騎士。カードの隅には「激レア」の文字が輝いている。\n\nその名は――『降魔の竜騎士カイザー』！",
+                    "nextScene": "chapter4_3"
+                },
+                {
+                    "id": "chapter4_3",
+                    "image": "images/26.png",
+                    "text": "たった一枚で、戦いの流れをひっくり返せるほどの、超強力なカードだ。\n\n「す、すごい！これさえあれば、絶対にケンタに勝てるぞ！」\n\n大喜びするユウキを見て、れんとんは静かに言った。\n\n「すごいカードだな。でもな、ユウキ。どんなに強いカードも、使う心次第で、最強の武器にも、ただの紙切れにもなる。それを忘れるなよ」",
+                    "nextScene": "chapter4_4"
+                },
+                {
+                    "id": "chapter4_4",
+                    "image": "images/26.png",
+                    "text": "れんとんの言葉の意味がよくわからないまま、ユウキは『降魔の竜騎士カイザー』をデッキの一番大事な場所に入れ、ケンタに勝負を挑むために学校へと走った。",
+                    "nextScene": "chapter5"
+                },
+                {
+                    "id": "chapter5",
+                    "image": "images/15.png",
+                    "text": "【5、決戦の時！ケンタへの挑戦状】\n\n「ケンタ！僕と勝負だ！」\n\nユウキの力強い声に、ケンタは驚いた顔をしたが、すぐにニヤリと笑って挑戦を受けた。\n\nいよいよ、決戦の時。対戦シートを挟んでケンタと向き合う。\n\n（ついにこの時が来た……！）",
+                    "nextScene": "chapter5_2"
+                },
+                {
+                    "id": "chapter5_2",
+                    "image": "images/15.png",
+                    "text": "胸に秘めた激レアカードを想う。キミは今、どんな気持ちでこの勝負にのぞむ？",
+                    "choices": [
+                        {
+                            "text": "「今までの恨み、晴らしてやる！コテンパンにしてやるぞ！」",
+                            "nextScene": "bad_ending"
+                        },
+                        {
+                            "text": "「れんとんとの修行の成果を見せるんだ！正々堂々、全力で戦おう！」",
+                            "nextScene": "good_ending"
+                        },
+                        {
+                            "text": "「勝てるか分からないけど、今の自分にできる最高のプレイをしよう！」",
+                            "nextScene": "growth_ending"
+                        }
+                    ]
+                },
+                {
+                    "id": "good_ending",
+                    "image": "images/3.png",
+                    "text": "（れんとん師匠との修行の成果を、今こそ見せるんだ！）\n\nユウキは、まっすぐケンタの目を見て言った。「ケンタ、全力でいこうぜ！」\n\n試合は、これまでで一番の激しい戦いになった。ケンタの強力なコンボを、ユウキは修行で得た知識でギリギリかわしていく。",
+                    "nextScene": "good_ending_2"
+                },
+                {
+                    "id": "good_ending_2",
+                    "image": "images/20.png",
+                    "text": "そして、ついにその時が来た。ユウキは切り札、『降魔の竜騎士カイザー』を召喚する！\n\n「なっ……！？」\n\nケンタが驚くが、それでも諦めずに最強のモンスターで応戦する。一進一退の攻防。お互いのライフはもう残りわずかだ。",
+                    "nextScene": "good_ending_3"
+                },
+                {
+                    "id": "good_ending_3",
+                    "image": "images/20.png",
+                    "text": "最後は、ユウキが修行で考え出した、手持ちの弱いカードとカイザーを組み合わせたオリジナルコンボが炸裂！\n\nほんのわずかな差で、ユウキは初めてケンタに勝利することができた。\n\n「……やった！」\n\n息を切らしながら、ユウキは勝利をかみしめる。",
+                    "nextScene": "good_ending_4"
+                },
+                {
+                    "id": "good_ending_4",
+                    "image": "images/25.png",
+                    "text": "負けたケンタは、悔しそうに下を向いていたが、やがて顔を上げて、ニカッと笑った。\n\n「やるな、ユウキ！すっげえ強くなったじゃないか！あんなコンボ、初めて見たぜ。……また対戦しようぜ！」\n\nそう言って、ケンタは手を差し出してきた。ユウキはその手を、力強くにぎり返した。",
+                    "nextScene": "good_ending_5"
+                },
+                {
+                    "id": "good_ending_5",
+                    "image": "images/25.png",
+                    "text": "二人の間には、もう悔しさや憎しみはない。お互いを認め合う、最高のライバルが生まれた瞬間だった。\n\nこれから、ユウキとケンタは、一緒にたくさんゲームをして、もっともっと強くなっていくんだろう。\n\n（【グッドエンド】最高のライバル　おしまい）",
+                    "isEnding": true,
+                    "endingType": "good"
+                },
+                {
+                    "id": "growth_ending",
+                    "image": "images/3.png",
+                    "text": "（勝てるかどうかは分からない。でも、今の僕が出せる、最高の力で戦うんだ！）\n\nユウキは深呼吸をして、勝負に集中した。\n\n修行で学んだことをすべて出し切り、ケンタと互角の戦いをくりひろげる。ついに切り札の『降魔の竜騎士カイザー』を召喚し、ケンタを追い詰めた。",
+                    "nextScene": "growth_ending_2"
+                },
+                {
+                    "id": "growth_ending_2",
+                    "image": "images/16.png",
+                    "text": "（いける！勝てるかもしれない！）\n\nしかし、ケンタは最後の最後で、ユウキも知らなかった隠し玉のカードを使い、ギリギリのところでカイザーを打ち破った。\n\n結果は、またしてもユウキの負けだった。\n\n「……負けた」",
+                    "nextScene": "growth_ending_3"
+                },
+                {
+                    "id": "growth_ending_3",
+                    "image": "images/17.png",
+                    "text": "がっくりと肩を落とすユウキ。でも、不思議と、いつものような悔し涙は出なかった。\n\nれんとんとの修行の日々が、頭に浮かぶ。カードのことをたくさん勉強したこと、お菓子を我慢したこと……。全部、無駄じゃなかった。全力で戦えたから、心はなぜか晴れやかだった。",
+                    "nextScene": "growth_ending_4"
+                },
+                {
+                    "id": "growth_ending_4",
+                    "image": "images/17.png",
+                    "text": "ユウキは顔を上げ、ケンタに向かって力強く言った。\n\n「すごいよ、ケンタ。今日も負けちゃったけど……次はもっと工夫して、絶対に勝つからな！」\n\nその真剣な目に、ケンタもニヤリと笑ってうなずいた。\n\n「おう、ユウキも前より強くなってるじゃないか、またいつでもかかってこいよ！」",
+                    "nextScene": "growth_ending_5"
+                },
+                {
+                    "id": "growth_ending_5",
+                    "image": "images/17.png",
+                    "text": "ユウキの本当の挑戦は、まだ始まったばかりだ。次こそ、勝利をつかんでみせる！【成長エンド】：次こそは！（おしまい）",
+                    "isEnding": true,
+                    "endingType": "growth"
+                },
+                {
+                    "id": "bad_ending",
+                    "image": "images/3.png",
+                    "text": "（見てろよケンタ！今までの分、コテンパンにしてやるからな！）\n\nユウキの心は、復讐の炎で燃えていた。\n\n勝負が始まると、ユウキは他のカードには目もくれず、ひたすら『降魔の竜騎士カイザー』を引くことだけを考えた。",
+                    "nextScene": "bad_ending_2"
+                },
+                {
+                    "id": "bad_ending_2",
+                    "image": "images/19.png",
+                    "text": "そしてついに、その激レアカードが手札にやってくる！\n\n「出でよ！『降魔の竜騎士カイザー』！」\n\nカイザーの圧倒的なパワーの前に、ケンタのモンスターはなすすべもなく倒されていく。ケンタはなにもできずに、あっという間に負けてしまった。\n\n「やった……！勝ったんだ！」",
+                    "nextScene": "bad_ending_3"
+                },
+                {
+                    "id": "bad_ending_3",
+                    "image": "images/21.png",
+                    "text": "ユウキは椅子から立ち上がり、ケンタを見下ろして勝ち誇ったように叫んだ。\n\n「どうだケンタ！見たか！これが俺の実力だ！いつも『ユウキは弱い』とか言って威張ってたけど、ぜーんぜん大したことないじゃん！」\n\nさらにユウキは畳みかける。",
+                    "nextScene": "bad_ending_4"
+                },
+                {
+                    "id": "bad_ending_4",
+                    "image": "images/21.png",
+                    "text": "「お前の持ってるカードも、このカイザー様の前じゃただの紙切れだな！もうお前は『クラスで一番』なんて名乗るなよ。今日からこの俺が、最強のカードマスターだ！分かったか！」\n\n言い終えると、ユウキはふんぞり返って胸を張った。",
+                    "nextScene": "bad_ending_5"
+                },
+                {
+                    "id": "bad_ending_5",
+                    "image": "images/21.png",
+                    "text": "ケンタは悔しそうに唇をぐっと噛みしめ、何も言い返さずに、黙って自分のカードを乱暴にカバンに詰め込むと、足早に教室から出て行ってしまった。\n\nそれを見ていた周りの友達が、ヒソヒソと話し始める。\n\n「言い過ぎだよ、ユウキ……」\n「なんか、今日のユウキ、やだな……」",
+                    "nextScene": "bad_ending_6"
+                },
+                {
+                    "id": "bad_ending_6",
+                    "image": "images/27.png",
+                    "text": "みんな、気まずそうな顔でユウキから目をそらし、一人、また一人と、静かにその場を離れていく。\n\n「なんだよ、みんな……。俺、勝ったんだぜ？」\n\n勝利に酔いしれていたユウキだったが、ふと気づくと、自分の周りには誰もいなくなっていた。",
+                    "nextScene": "bad_ending_7"
+                },
+                {
+                    "id": "bad_ending_7",
+                    "image": "images/27.png",
+                    "text": "ついにケンタに勝ったはずなのに、誰も「おめでとう」と言ってくれない。がらんとした教室で、ユウキはたった一人、ポツンと立ちつくすしかなかった。【反省エンド】：ひとりぼっちの勝利",
+                    "nextScene": "special_story"
+                },
+                {
+                    "id": "special_story",
+                    "image": "images/6.png",
+                    "text": "【スペシャルストーリー】：れんとんの告白と本当の強さ\n\n一人ぼっちで公園のベンチに座り込んでいると、そこにれんとんがやってきた。",
+                    "nextScene": "special_story_2"
+                },
+                {
+                    "id": "special_story_2",
+                    "image": "images/23.png",
+                    "text": "「勝ったんだってな。……でも、嬉しそうじゃないな」\n\nユウキは、うつむいたまま何も言えない。すると、れんとんは静かに自分の過去を語り始めた。\n\n「昔の俺も、キミと同じだったよ。地元じゃ負け知らずで、周りのヤツらをコテンパンに負かして、いい気になってた。自分が一番強いって証明したくて、全国大会に出たんだ」",
+                    "nextScene": "special_story_3"
+                },
+                {
+                    "id": "special_story_3",
+                    "image": "images/23.png",
+                    "text": "れんとんの目は、遠くを見ていた。\n\n「でも、負けた。あっさりとね。相手は、お金持ちで、俺が見たこともないような強力なレアカードを何枚も持っていた。俺のテクニックだけじゃ、どうにもならなかったんだ」\n\n「負けた時、対戦相手に鼻で笑われたよ。『カードゲームは金がすべてだ』ってね。」",
+                    "nextScene": "special_story_4"
+                },
+                {
+                    "id": "special_story_4",
+                    "image": "images/23.png",
+                    "text": "「その時、ものすごくショックで……ふと、今まで俺が泣かせてきた子たちの顔が、頭に浮かんだんだ。俺も、コイツと同じことをしてきたんだって気づいて、怖くなった。それ以来、大会に出るのをやめたんだ」\n\nれんとんは、ユウキの目をまっすぐ見て言った。",
+                    "nextScene": "special_story_5"
+                },
+                {
+                    "id": "special_story_5",
+                    "image": "images/23.png",
+                    "text": "「ユウキ。カードゲームは、負けた相手をバカにして、自分がえらいって思うための道具じゃない。ゲームを通して、相手の手を読む分析力や、今あるカードでどう戦うか考える対応力を身につける。そして何より、対戦する相手に敬意をはらって、お互いを高め合うことこそが、本当の楽しさなんだよ」",
+                    "nextScene": "special_story_6"
+                },
+                {
+                    "id": "special_story_6",
+                    "image": "images/28.jpg",
+                    "text": "れんとんの言葉が、ユウキの胸に突き刺さった。自分はなんてバカなことをしてしまったんだろう。ただ勝ちたかっただけなのに、一番大事なことを忘れていた。ユウキの目から、熱い涙がこぼれ落ちた。",
+                    "nextScene": "true_ending"
+                },
+                {
+                    "id": "true_ending",
+                    "image": "images/10.png",
+                    "text": "「れんとん師匠……ありがとう。僕、行ってくる！」\n\nユウキは涙をぬぐうと、ケンタの家に向かって全力で走り出した。",
+                    "nextScene": "true_ending_1_2"
+                },
+                {
+                    "id": "true_ending_1_2",
+                    "image": "images/32.png",
+                    "text": "ケンタに会うと、ユウキはまっすぐに頭を下げた。\n\n「ケンタ、ごめん！あの時は、ひどい勝ち方をして、本当にごめんなさい！」",
+                    "nextScene": "true_ending_2"
+                },
+                {
+                    "id": "true_ending_2",
+                    "image": "images/31.png",
+                    "text": "突然のことに驚いていたケンタだったが、ユウキの真剣な目を見て、少し照れくさそうに言った。\n\n「……別に、いいよ。オレも、今までユウキのこと、バカにしてたし……。お互い様、だろ」\n\nユウキは顔を上げた。ケンタが、少しだけ笑っているように見えた。\n\n「ケンタ、もう一度、僕と勝負してくれないか！今度こそ、本当の勝負をしよう！」",
+                    "nextScene": "true_ending_3"
+                },
+                {
+                    "id": "true_ending_3",
+                    "image": "images/18.png",
+                    "text": "「……おう！」\n\nケンタは力強くうなずいた。\n\n二人はまた、対戦シートを挟んで向き合う。でも、前とは何かが違っていた。\n\n心の中にあるのは、憎しみじゃない。お互いを認め合う、ワクワクした気持ちだ。",
+                    "nextScene": "true_ending_4"
+                },
+                {
+                    "id": "true_ending_4",
+                    "image": "images/18.png",
+                    "text": "「いくぜ、ユウキ！」\n「のぞむところだ、ケンタ！」\n\nこれから、二人の楽しいカードバトルがたくさん待っている。本当の強さを見つけたユウキの物語は、ここからが本当の始まりだ。\n\n（【真のハッピーエンド】：ごめんな、ケンタ！　本当のおしまい）",
+                    "isEnding": true,
+                    "endingType": "true_happy"
+                }
+            ],
+            "flags": {
+                "analysis_done": false,
+                "money_done": false,
+                "muscle_done": false
+            }
+        };
+        
+        gameFlags = { ...gameData.flags };
+            });
+
+        function startGame() {
+            if (!gameData) {
+                alert('ゲームデータが読み込まれていません。しばらくお待ちください。');
+                return;
+            }
+            
+            document.getElementById('titleScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'flex';
+            currentScene = 'chapter1';
+            gameHistory = [];
+            gameFlags = {
+                analysis_done: false,
+                money_done: false,
+                muscle_done: false
+            };
+            displayScene();
+        }
+
+        function splitTextIntoPages(text) {
+            // 無駄な改行を減らす処理
+            let cleanedText = text.replace(/\n\n+/g, '\n'); // 連続する改行を単一の改行に
+            
+            // テキストの長さで簡単に分割（長いテキスト用に調整）
+            const maxLength = 200; // 最大文字数を調整
+            const pages = [];
+            
+            if (cleanedText.length <= maxLength) {
+                return [cleanedText];
+            }
+            
+            // 改行で分割して処理
+            const lines = cleanedText.split('\n');
+            let currentPage = '';
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                const testPage = currentPage ? currentPage + '\n' + line : line;
+                
+                if (testPage.length > maxLength && currentPage) {
+                    // 現在のページを保存して新しいページを開始
+                    pages.push(currentPage);
+                    currentPage = line;
+                } else {
+                    currentPage = testPage;
+                }
+            }
+            
+            // 最後のページを追加
+            if (currentPage) {
+                pages.push(currentPage);
+            }
+            
+            return pages.length > 0 ? pages : [cleanedText];
+        }
+
+        function displayScene() {
+            if (!gameData) return;
+
+            const scene = gameData.scenes.find(s => s.id === currentScene);
+            if (!scene) {
+                console.error('シーンが見つかりません:', currentScene);
+                return;
+            }
+
+            // startシーンの場合は自動的にchapter1に遷移
+            if (scene.id === 'start') {
+                currentScene = 'chapter1';
+                displayScene();
+                return;
+            }
+
+            // テキストをページに分割
+            currentTextPages = splitTextIntoPages(scene.text || '');
+            currentTextPageIndex = 0;
+
+            // 画像とテキストを更新
+            document.getElementById('sceneImage').src = scene.image;
+            
+            // テキストを表示
+            const textElement = document.getElementById('textContent');
+            if (textElement && currentTextPages.length > 0) {
+                textElement.textContent = currentTextPages[currentTextPageIndex];
+            }
+            
+            // プログレスバーを更新
+            updateProgressBar();
+
+            // ボタンエリアを更新
+            const choiceButtons = document.getElementById('choiceButtons');
+            const nextBtn = document.getElementById('nextBtn');
+            const prevBtn = document.getElementById('prevBtn');
+            
+            choiceButtons.innerHTML = '';
+            
+            // フラグを設定
+            if (scene.flag) {
+                gameFlags[scene.flag] = true;
+            }
+
+            // 選択肢がある場合
+            if (scene.choices && scene.choices.length > 0) {
+                // 全てのページを表示し終わってから選択肢を表示
+                if (currentTextPageIndex >= currentTextPages.length - 1) {
+                    nextBtn.style.display = 'none';
+                    
+                    // 選択肢表示時はテキストを隠す
+                    if (textElement) {
+                        textElement.style.display = 'none';
+                    }
+                    
+                    // 修行選択肢の動的フィルタリング
+                    let availableChoices = scene.choices;
+                    if (scene.id === 'chapter3') {
+                        availableChoices = scene.choices.filter(choice => {
+                            if (choice.nextScene === 'training_analysis' && gameFlags.analysis_done) return false;
+                            if (choice.nextScene === 'training_money' && gameFlags.money_done) return false;
+                            if (choice.nextScene === 'training_muscle' && gameFlags.muscle_done) return false;
+                            return true;
+                        });
+                        
+                        // 3つの修行がすべて完了した場合、次の章へ
+                        if (gameFlags.analysis_done && gameFlags.money_done && gameFlags.muscle_done) {
+                            currentScene = 'chapter4';
+                            displayScene();
+                            return;
+                        }
+                    }
+                    
+                    availableChoices.forEach(choice => {
+                        const btn = document.createElement('button');
+                        btn.className = 'choice-btn';
+                        btn.textContent = choice.text;
+                        btn.onclick = () => selectChoice(choice.nextScene);
+                        choiceButtons.appendChild(btn);
+                    });
+                } else {
+                    nextBtn.style.display = 'inline-block';
+                    nextBtn.textContent = '次へ';
+                    nextBtn.onclick = () => nextTextPage();
+                    
+                    // テキストページ表示時はテキストを表示
+                    if (textElement) {
+                        textElement.style.display = 'block';
+                    }
+                }
+            } else {
+                nextBtn.style.display = 'inline-block';
+                
+                // テキストを表示
+                if (textElement) {
+                    textElement.style.display = 'block';
+                }
+                
+                // テキストのページが複数ある場合
+                if (currentTextPageIndex < currentTextPages.length - 1) {
+                    nextBtn.textContent = '次へ';
+                    nextBtn.onclick = () => nextTextPage();
+                } else {
+                    // エンディングの場合
+                    if (scene.isEnding) {
+                        nextBtn.textContent = 'はじめに戻る';
+                        nextBtn.onclick = () => returnToTitle();
+                        showEndingScreen(scene);
+                    } else {
+                        nextBtn.textContent = '次へ';
+                        nextBtn.onclick = () => nextScene();
+                    }
+                }
+            }
+            
+            // 戻るボタンの状態
+            prevBtn.disabled = gameHistory.length === 0;
+
+            // 特殊な条件分岐処理（check_both_trainingsシーンの場合の処理）
+            if (scene.id === 'check_both_trainings') {
+                // 3つの修行がすべて完了した場合のみchapter4に進む
+                if (gameFlags.analysis_done && gameFlags.money_done && gameFlags.muscle_done) {
+                    currentScene = 'chapter4';
+                    displayScene();
+                    return;
+                } else {
+                    // まだ完了していない修行があれば、chapter3に戻る
+                    currentScene = 'chapter3';
+                    displayScene();
+                    return;
+                }
+            }
+        }
+
+        function displayCurrentTextPage() {
+            if (currentTextPages.length > 0 && currentTextPageIndex < currentTextPages.length) {
+                const textElement = document.getElementById('textContent');
+                if (textElement) {
+                    textElement.textContent = currentTextPages[currentTextPageIndex];
+                }
+            }
+        }
+
+        function nextTextPage() {
+            if (currentTextPageIndex < currentTextPages.length - 1) {
+                currentTextPageIndex++;
+                displayCurrentTextPage();
+                
+                // 最後のページに到達したら、ボタンを再設定
+                if (currentTextPageIndex >= currentTextPages.length - 1) {
+                    const scene = gameData.scenes.find(s => s.id === currentScene);
+                    const choiceButtons = document.getElementById('choiceButtons');
+                    const nextBtn = document.getElementById('nextBtn');
+                    
+                    if (scene.choices && scene.choices.length > 0) {
+                        nextBtn.style.display = 'none';
+                        
+                        // 選択肢表示時はテキストを隠す
+                        const textElement = document.getElementById('textContent');
+                        if (textElement) {
+                            textElement.style.display = 'none';
+                        }
+                        
+                        // 修行選択肢の動的フィルタリング
+                        let availableChoices = scene.choices;
+                        if (scene.id === 'chapter3') {
+                            availableChoices = scene.choices.filter(choice => {
+                                if (choice.nextScene === 'training_analysis' && gameFlags.analysis_done) return false;
+                                if (choice.nextScene === 'training_money' && gameFlags.money_done) return false;
+                                if (choice.nextScene === 'training_muscle' && gameFlags.muscle_done) return false;
+                                return true;
+                            });
+                            
+                            // 3つの修行がすべて完了した場合、次の章へ
+                            if (gameFlags.analysis_done && gameFlags.money_done && gameFlags.muscle_done) {
+                                currentScene = 'chapter4';
+                                displayScene();
+                                return;
+                            }
+                        }
+                        
+                        availableChoices.forEach(choice => {
+                            const btn = document.createElement('button');
+                            btn.className = 'choice-btn';
+                            btn.textContent = choice.text;
+                            btn.onclick = () => selectChoice(choice.nextScene);
+                            choiceButtons.appendChild(btn);
+                        });
+                    } else {
+                        if (scene.isEnding) {
+                            nextBtn.textContent = 'はじめに戻る';
+                            nextBtn.onclick = () => returnToTitle();
+                        } else {
+                            nextBtn.textContent = '次へ';
+                            nextBtn.onclick = () => nextScene();
+                        }
+                    }
+                }
+            }
+        }
+
+        function handleConditionalNext(scene) {
+            // check_both_trainingsは削除されたため、この関数は不要
+            // 修行完了チェックは displayScene() で行う
+        }
+
+        function selectChoice(nextSceneId) {
+            if (nextSceneId) {
+                gameHistory.push(currentScene);
+                currentScene = nextSceneId;
+                
+                // 修行系のシーンで、既にフラグが立っている場合は自動的にchapter3に戻る
+                if (nextSceneId === 'training_analysis' && gameFlags.analysis_done) {
+                    currentScene = 'chapter3';
+                } else if (nextSceneId === 'training_money' && gameFlags.money_done) {
+                    currentScene = 'chapter3';
+                } else if (nextSceneId === 'training_muscle' && gameFlags.muscle_done) {
+                    currentScene = 'chapter3';
+                }
+                
+                displayScene();
+            }
+        }
+
+        function nextScene() {
+            if (!gameData) return;
+
+            const scene = gameData.scenes.find(s => s.id === currentScene);
+            if (scene && scene.nextScene) {
+                gameHistory.push(currentScene);
+                currentScene = scene.nextScene;
+                displayScene();
+            }
+        }
+
+        function previousScene() {
+            if (gameHistory.length > 0) {
+                currentScene = gameHistory.pop();
+                displayScene();
+            }
+        }
+
+        function returnToTitle() {
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('titleScreen').style.display = 'flex';
+            currentScene = 'start';
+            gameHistory = [];
+            gameFlags = {
+                analysis_done: false,
+                money_done: false,
+                muscle_done: false
+            };
+        }
+
+        function updateProgressBar() {
+            if (!gameData) return;
+
+            const totalScenes = gameData.scenes.length;
+            const currentIndex = gameData.scenes.findIndex(s => s.id === currentScene);
+            const progress = Math.max(0, Math.min(100, (currentIndex / totalScenes) * 100));
+            
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function showEndingScreen(scene) {
+            // エンディング画面の特別な演出
+            const textArea = document.querySelector('.text-area');
+            if (scene.endingType) {
+                textArea.classList.add('ending-screen');
+                setTimeout(() => {
+                    textArea.classList.remove('ending-screen');
+                }, 3000);
+            }
+        }
+
+        // キーボードショートカット
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                const nextBtn = document.getElementById('nextBtn');
+                if (nextBtn.style.display !== 'none' && !nextBtn.disabled) {
+                    nextBtn.click();
+                }
+            } else if (event.key === 'Backspace') {
+                event.preventDefault();
+                const prevBtn = document.getElementById('prevBtn');
+                if (!prevBtn.disabled) {
+                    prevBtn.click();
+                }
+            }
+        });
+
+        // タッチスワイプ対応
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        document.addEventListener('touchstart', function(event) {
+            touchStartX = event.touches[0].clientX;
+            touchStartY = event.touches[0].clientY;
+        });
+
+        document.addEventListener('touchend', function(event) {
+            const touchEndX = event.changedTouches[0].clientX;
+            const touchEndY = event.changedTouches[0].clientY;
+            const diffX = touchStartX - touchEndX;
+            const diffY = touchStartY - touchEndY;
+
+            // 水平スワイプの場合
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                if (diffX > 0) {
+                    // 左スワイプ（次へ）
+                    const nextBtn = document.getElementById('nextBtn');
+                    if (nextBtn.style.display !== 'none' && !nextBtn.disabled) {
+                        nextBtn.click();
+                    }
+                } else {
+                    // 右スワイプ（戻る）
+                    const prevBtn = document.getElementById('prevBtn');
+                    if (!prevBtn.disabled) {
+                        prevBtn.click();
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
